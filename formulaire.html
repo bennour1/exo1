@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>formulaire</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link href="node_modules/chosen-js/chosen.min.css" rel="stylesheet">
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+    <script src="node_modules/chosen-js/chosen.jquery.min.js"></script>
+
+    <script>
+        /****************************************
+         * Modèlisation d'un livre
+         ****************************************/
+
+        function Book(title, editeur, genre, auteur) {
+            this.title = title;
+            this.editeur = editeur;
+            this.genre = genre;
+            this.auteur = auteur;
+        }
+
+        //Validation de la saisie
+        Book.prototype.validate = function() {
+            var valid = true;
+
+            //Le titre du livre ne peut être vide
+            if (this.title.trim() == "") {
+                valid = false;
+                this.errorMessage = "Le titre ne peut être vide";
+            }
+            /**********************************/
+            if (this.editeur.trim() == "") {
+                valid = false;
+                this.errorMessage = "L'editeur ne peut être vide";
+            }
+            /**********************************/
+            if (this.genre.trim() == "") {
+                valid = false;
+                this.errorMessage = "Le genre ne peut être vide";
+            }
+            if (this.auteur.trim() == "") {
+                valid = false;
+                this.errorMessage = "L'auteur ne peut être vide";
+            }
+
+            //Il ne peut y avoir de doublons sur le livre
+            var titleToAdd = this.title; /**********************************************/
+            var editeurToAdd = this.title;
+            var bookExists = bookList.some(function(item) {
+                return item.title == titleToAdd;
+            });
+            /*******************************************111111111/
+                var booksExists = booksList.some(function(item){
+                return item.editeur == editeurToAdd;
+            });
+                /******************************************/
+            if (bookExists) {
+                valid = false;
+                this.errorMessage = "Ce livre existe déjà";
+            }
+            /***********************************************11111111111*/
+            /*if (BooksExists) {
+                valid = false;
+                this.errorMessage = "Ce edditeur existe déjà";
+            }*/
+            /***********************************************/
+
+            return valid;
+        }
+
+        //Création d'une ligne de tableau
+        Book.prototype.renderTableRow = function() {
+            //Création de la ligne
+            var $row = $("<tr></tr>");
+            //Création de la case pour le titre
+            var $titleCell = $("<td></td>");
+            var $editeurCell = $("<td></td>");
+            var $genreCell = $("<td></td>");
+            var $auteurCell = $("<td></td>");
+            //Remplissage du titre
+            $titleCell.text(this.title);
+            $editeurCell.text(this.editeur);
+            $genreCell.text(this.genre);
+            $auteurCell.text(this.auteur);
+
+            //Ajout de la case dans la ligne
+            $row.append($titleCell);
+            $row.append($editeurCell);
+            $row.append($genreCell);
+            $row.append($auteurCell);
+
+            //colonne de suppression des livres
+            $deleteCell = $("<td><button class=\"btn btn-danger delete\">supprimer</button></td>");
+            $row.append($deleteCell);
+
+            return $row;
+        }
+
+        //Liste des livres
+        var bookList = [];
+        //Récupération des données éventuelles stockée en LocalStorage
+        var data = JSON.parse(window.localStorage.getItem("bookList")) || [];
+        for (let item of data) {
+            bookList.push(new Book(item.title, item.editeur, item.genre, item.auteur));
+        }
+
+        console.log(bookList);
+
+        //Affichage des livres sous forme de table
+        renderTable = function() {
+            //création de l'élément table
+            var $table = $("<table class=\"table table-bordered table-striped\" id=\"books\"></table>");
+
+            var $tableHead = $(" <tr><th>titre</th><th>editeur</th><th>genre</th><th>auteur</th><th>action</th></tr>");
+            $table.append($tableHead);
+
+            //Ajout des lignes à la table
+            for (let book of bookList) {
+                $table.append(book.renderTableRow());
+            }
+
+            //Ajout de la table au DOM
+            $("body").append($table);
+
+        }
+
+
+        $(document).ready(function() {
+
+            //Affichage des livres
+            renderTable();
+
+            //Ciblage des éléments du DOM
+            const $errorDiv = $("#errorDiv");
+            const $titleInput = $("#title"); /**********************************************/
+            const $editeurInput = $("#editeur");
+            const $genreInput = $("#genre");
+            const $auteurInput = $("#auteur");
+            //Masquage des erreurs au chargement de la page
+            $errorDiv.hide();
+
+            //Capture de l'événement d'envoi du formulaire
+            $("#form").submit(function(event) {
+                event.preventDefault();
+                //Récupération de la saisie
+                var title = $titleInput.val(); /**********************************************/
+                var editeur = $editeurInput.val();
+                var genre = $genreInput.val();
+                var auteur = $auteurInput.val();
+                //Construction d'une instance de livre
+                var book = new Book(title, editeur, genre, auteur);
+
+                //Validation de la saisie
+                if (book.validate()) {
+                    //Stockage du nouvau livre dans la liste
+                    bookList.push(book);
+                    console.log(bookList);
+                    //masquage des erreurs 
+                    $errorDiv.hide();
+                    //réinitialisation du champ titre
+                    $titleInput.val(""); /**********************************************/
+                    $editeurInput.val("");
+                    $genreInput.val("");
+                    $auteurInput.val("");
+
+                    //focus sur le champ titre
+                    $titleInput.focus();
+                    $editeurInput.focus();
+                    $genreInput.focus();
+                    $auteurInput.focus();
+
+                    //Ajout de la ligne au tableau
+                    $("#books").append(book.renderTableRow());
+                    //Ajout du livre au local storage
+                    window.localStorage.setItem("bookList", JSON.stringify(bookList));
+                } else {
+                    console.log("erreur");
+                    //Affichage des erreurs
+                    $errorDiv.show();
+                    $errorDiv.text(book.errorMessage);
+                }
+            });
+
+            //Suppression d'une ligne du tableau
+            $("body").delegate(".delete", "click", function() {
+                //Récupération du titre du livre à supprimer
+                var bookTitle = $(this).parent().parent().children().first().text();
+                //suppression dans le DOM
+                $(this).parent().parent().remove();
+
+                //Recherche de la position du livre à supprimer
+                var index = bookList.findIndex(function(book) {
+                    return bookTitle == book.title;
+                });
+
+                //Suppression du livre dans le tableau bookList
+                bookList.splice(index, 1);
+
+                //Enregistrement dans localStorage
+                window.localStorage.setItem("bookList", JSON.stringify(bookList));
+
+            });
+
+
+            $("#departement").chosen();
+        });
+    </script>
+
+</head>
+
+<body class="container-fluid">
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+            <div class="alert alert-danger mt-2" id="errorDiv">
+                Erreur de saisie
+            </div>
+
+            <form method="post" id="form">
+                <div class="form-group">
+                    <label for="auteur">Editeur</label>
+                    <input type="text" id="editeur" class="form-control" placeholder="Saisir editeur">
+                    <label for="title">Genre</label>
+                    <input type="text" id="genre" class="form-control" placeholder="Saisir genre">
+                    <label for="auteur">Auteur</label>
+                    <input type="text" id="auteur" class="form-control" placeholder="Saisir auteur">
+                    <label for="title">Titre</label>
+                    <input type="text" id="title" class="form-control" placeholder="Saisir titre">
+                </div>
+
+                <div class="form-group">
+                    <select id="departement">
+                        <option>Ain</option>
+                        <option>Allier</option>
+                        <option>Doubs</option>
+                        <option>Dordogne</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-warning btn-block" type="submit">Valider</button>
+                <br>
+            </form>
+        </div>
+    </div>
+
+
+</body></html>

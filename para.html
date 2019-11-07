@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>paragraphes dynamiques</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+        . h2 {
+            cursor: pointer;
+        }
+
+        .open {
+            background-color: brown;
+        }
+
+    </style>
+</head>
+
+<body class="p-4">
+    <h2><a href="#" class="text-warning">Premier titre</a></h2>
+    <p class="text-warning">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum, dignissimos accusamus ipsam voluptatem nemo, dolore vitae iure culpa minima aspernatur quas ab veniam libero! Tenetur veritatis cumque eligendi temporibus perspiciatis. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit, eos atque. Commodi veritatis consequuntur, accusamus magni facilis molestiae consectetur quibusdam omnis aperiam rem quae nam reprehenderit, culpa vero ipsam sed.</p>
+
+    <h2>2eme titre</h2>
+    <p class="text-info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque quo impedit ad error numquam repellendus reiciendis veritatis debitis nobis quas tempore voluptatem obcaecati asperiores non ipsum molestiae repellat, totam quibusdam. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro possimus et perferendis labore voluptatum officiis alias, aspernatur culpa unde ducimus amet quae nulla laborum non reprehenderit, velit, sed error nesciunt!</p>
+
+    <h2 class="p-3 mb-2 bg-warning text-dark">3eme titre</h2>
+    <p class="badge badge-primary text-wrap text-uppercase">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi quas soluta aliquam deleniti tempora temporibus repellendus elig endi fugiat voluptatum sequi. Itaque quos, sed accusamus voluptatibus dolore deserunt laboriosam, aliquam maiores. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga autem illo possimus culpa minima suscipit perferendis aliquam velit perspiciatis maiores, quas officia dolorem dolor laborum nemo aut veritatis, labore omnis.</p>
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $titres = $("h2");
+            $para = $("p")
+            $para.hide();
+            $titres.click(function() {
+                $para.hide(200);
+                $titres.removeClass("open");
+                $(this).next("p").toggle(1000);
+                $(this).toggleClass("open");
+            });
+        });
+
+    </script>
+</body>
+
+</html>

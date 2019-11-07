@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        function Book(title) {
+            this.title = title;
+        }
+        // création d'une ligne de tableau
+        Book.prototype.validate = function() {
+            var valid = true;
+            if (this.title.trim() == "") {
+                valid = false;
+            }
+            return valid;
+        }
+        /************************************************/
+        renderTableRow1 = function() {
+            // création de la ligne
+            var $rowTete = $("<tr></tr>");
+            // création de la case pour le titre 
+            var $tete = $("<th id='head'></th>");
+            // remplissage du titre 
+            $tete.text("Titre des livres");
+            // ajout de la case dans la ligne 
+            $rowTete.append($tete);
+            return $rowTete;
+        }
+        /* renderTable = function() {
+            var $table = $("<table class=\"table table-bordered table-striped\" id=\"books\"></table>");*/
+
+        /************************************************/
+
+
+        Book.prototype.renderTableRow = function() {
+            // création de la ligne
+            var $row = $("<tr></tr>");
+            // création de la case pour le titre 
+            var titleCell = $("<td id='td1'></td>");
+            // remplissage du titre 
+            titleCell.text(this.title);
+            // ajout de la case dans la ligne 
+            $row.append(titleCell);
+
+            return $row;
+        }
+        // liste des livres
+        var bookList = [];
+        var data =
+            JSON.parse(window.localStorage.getItem("bookList")) || [];
+        for (let item of data) {
+            bookList.push(new book(item.title));
+        }
+        // [new Book("20 000 lieues sous les mers")];
+        var bookList = window.localStorage.getItem("bookList") || [];
+
+        // affichage des livres sous forme de table
+
+
+        /* var $tableHead = $("<tr><th>titre</th></tr>");
+        $table.append($tableHead);
+        */
+
+        // Ajout des lignes à la table 
+        for (let book of bookList) {
+            $table.append(book.renderTableRow1());
+            $table.append(book.renderTableRow());
+        }
+        // ajout de la  table au Dom
+        $("body").append($table); {
+
+        }
+        console.log(bookList);
+
+        $(document).ready(function() {
+            // affichage des livres
+            renderTable();
+
+            // cibles des éléments du DOM
+            var $errorDiv = $("#errorDiv");
+            var $titleInput = $("#title");
+
+            // Masquage des erreurs au chargement de la page 
+            $errorDiv.hide();
+
+
+
+            // capture de l'événement d'envoi du formulaire
+            $("#form").submit(function(event) {
+                // console.log("form");
+                event.preventDefault();
+                // récupération de la saisie
+                var title = $("#title").val();
+                // construction d'une instance de livre
+                var book = new Book(title);
+                // validation de la saisie
+                if (book.validate()) {
+                    // stockage du nouveau livre dans la liste
+                    bookList.push(book);
+                    console.log(bookList);
+                    // masquage des erreurs(quand je corige)
+                    $errorDiv.hide();
+                    // réinitialisation du champ titre
+                    $titleInput.val("");
+                    // focus sur le champ titre
+                    $titleInput.focus();
+                    /**************/
+                    /**************/
+                    //ajout de la ligne au tableau
+                    $("#books").append(book.renderTableRow());
+                    //Ajout du livre au local storage
+                    window.localStorage.setItem("bookList", JSON.stringify(bookList));
+                } else {
+                    console.log("erreur");
+                    // affichage des erreurs
+                    $errorDiv.show();
+                }
+
+                // console.log(title);
+            });
+        });
+    </script>
+    <style>
+        body {
+            background-color: #524F50;
+            color: aliceblue;
+        }
+
+        #head {
+            background-color: #343333;
+            color: aliceblue;
+        }
+
+        #td1 {
+            color: antiquewhite
+        }
+    </style>
+</head>
+
+<body class="container-fluid">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="alert alert-danger mt-2" id="errorDiv">
+                Erreur de saisie
+            </div>
+            <form method="post" id="form">
+                <div class="form-group">
+                    <label for="title">Titre</label>
+                    <input type="text" id="title" class="form-control" placeholder="Saisir votre texte">
+                </div>
+
+                <button class="btn btn-danger btn-block" type="submit">Valider</button>
+                <br>
+            </form>
+        </div>
+
+
+
+
+    </div>
+
+</body></html>

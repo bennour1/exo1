@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Jquery start</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <h1>Hello</h1>
+    <h1>hola</h1>
+    <h1>halo</h1>
+    <h1>gut</h1>
+
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        /*  console.log($(document));  */
+
+        /* $(document).ready(function(){
+            $("h1").text("Bonjour");/* on a chanche le h1 hello-->bonjour */
+        /*  });  */
+
+        //$(document).ready(function(){
+        //    $("h1").hide(500).text("Bonjour").show(500);
+        //});
+        $(document).ready(function() {
+            var $h1 = $("h1");
+            var pos = 0;
+            $h1
+                .hide(1000, function() {
+                    console.log("fin de hide");
+                    $(this).text(
+                        function(index, oldValue) {
+                            pos++;
+                            return `${pos} Bonjour (${oldValue})`;
+                        }
+                    );
+                })
+                .show(1000);
+          $h1.eq(2).css("color", "red").attr("lang","de").addClass("alert").addClass("alert-danger");
+            $h1.eq(1).css("color", "#dc3545").attr("lang","de").addClass("alert").addClass("alert-secondary");
+            $h1.eq(3).css("color", "#ffc107")
+                .attr("lang","de").addClass("alert").addClass("alert-warning");
+            
+        });
+        
+        $("body").click('p','click', function () {
+var content = "<p>ok</p>";
+$(this).after(content);
+});
+
+    </script>
+            <p><input type="button" name="ok" id="okoo" value="Cliquez moi"></p>
+
+    
+</body>
+
+</html>
